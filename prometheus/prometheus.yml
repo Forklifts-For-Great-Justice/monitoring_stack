@@ -1,0 +1,128 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+  scrape_timeout: 10s
+
+scrape_configs:
+  # Node Exporter - system metrics on all hosts
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets:
+          - '10.200.0.7:9100'  # admin
+          - '10.200.0.8:9100'  # scoreboard
+          - '10.200.0.6:9100'  # quake
+        labels:
+          env: 'hackfortress'
+
+  # cAdvisor - container metrics on all hosts
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets:
+          - '10.200.0.7:8080'  # admin
+          - '10.200.0.8:8080'  # scoreboard
+          - '10.200.0.6:8080'  # quake
+        labels:
+          env: 'hackfortress'
+
+  # Blackbox HTTP probes
+  - job_name: 'blackbox_http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          # Main entry points
+          - 'hackfortress.net'
+          - 'admin.hackfortress.net'
+          - 'scoreboard.hackfortress.net'
+          - 'quake.hackfortress.net'
+          # Service endpoints
+          - 'traefik.hackfortress.net'
+          - 'portainer.hackfortress.net'
+          # QuakeJS
+          - 'quakejs.hackfortress.net'
+          # Scoreboard app
+          - 'scoreboard-app.hackfortress.net'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: '10.200.0.7:9115'
+      - target_label: __param_module
+        replacement: 'http_2xx'
+      - source_labels: [__param_target]
+        target_label: instance
+
+  # Blackbox DNS probes
+  - job_name: 'blackbox_dns'
+    metrics_path: /probe
+    params:
+      module: [dns]
+    static_configs:
+      - targets:
+          - 'hackfortress.net'
+          - 'admin.hackfortress.net'
+          - 'scoreboard.hackfortress.net'
+          - 'quake.hackfortress.net'
+          - 'grafana.hackfortress.net'
+          - 'prom.hackfortress.net'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: '10.200.0.7:9115'
+      - target_label: __param_module
+        replacement: 'dns'
+
+  # Blackbox TCP probes
+  - job_name: 'blackbox_tcp'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+          - '10.200.0.7:2379'  # etcd
+          - '10.200.0.7:5672'  # RabbitMQ AMQP
+          - '10.200.0.8:3306'  # MySQL
+          - '10.200.0.8:6379'  # Redis
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: '10.200.0.7:9115'
+      - target_label: __param_module
+        replacement: 'tcp_connect'
+
+  # etcd - service discovery health
+  - job_name: 'etcd'
+    static_configs:
+      - targets:
+          - '10.200.0.7:2381'
+    tls_config:
+      insecure_skip_verify: true
+    labels:
+      env: 'hackfortress'
+
+  # RabbitMQ - queue metrics
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets:
+          - '10.200.0.7:15692'
+    labels:
+      env: 'hackfortress'
+
+  # MySQL - database metrics
+  - job_name: 'mysqld'
+    static_configs:
+      - targets:
+          - '10.200.0.8:9104'
+    labels:
+      env: 'hackfortress'
+
+  # Redis - cache metrics
+  - job_name: 'redis'
+    static_configs:
+      - targets:
+          - '10.200.0.8:9121'
+    labels:
+      env: 'hackfortress'
