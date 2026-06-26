@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['10.200.0.7:9100', '10.200.0.8:9100', '10.200.0.6:9100']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['10.200.0.7:8080', '10.200.0.8:8080', '10.200.0.6:8080']
+
+  - job_name: 'blackbox_http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - 'admin.hackfortress.net'
+          - 'traefik.hackfortress.net'
+          - 'scoreboard.hackfortress.net'
+          - 'quake.hackfortress.net'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: '10.200.0.7:9115'
+
+  - job_name: 'etcd'
+    static_configs:
+      - targets: ['10.200.0.7:2381']
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['10.200.0.7:15692']
+
+  - job_name: 'mysqld'
+    static_configs:
+      - targets: ['10.200.0.8:9104']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['10.200.0.8:9121']
