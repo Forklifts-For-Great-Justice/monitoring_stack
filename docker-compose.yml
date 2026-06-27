@@ -14,6 +14,16 @@ services:
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=7d
     restart: unless-stopped
+    networks:
+      - monitoring_default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prom.rule=Host(`prom.hackfortress.net`)"
+      - "traefik.http.routers.prom.entrypoints=https"
+      - "traefik.http.routers.prom.tls=true"
+      - "traefik.http.routers.prom.tls.certresolver=cloudflare"
+      - "traefik.http.services.prom.loadbalancer.server.port=9090"
 
   grafana:
     image: grafana/grafana:11.0.0
@@ -25,6 +35,16 @@ services:
       - /srv/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - /srv/grafana/dashboards:/var/lib/grafana/dashboards
     restart: unless-stopped
+    networks:
+      - monitoring_default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.hackfortress.net`)"
+      - "traefik.http.routers.grafana.entrypoints=https"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=cloudflare"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
 
   blackbox_exporter:
     image: prom/blackbox-exporter:v0.25.0
@@ -39,3 +59,9 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
+
+networks:
+  monitoring_default:
+    external: true
+  proxy:
+    external: true
