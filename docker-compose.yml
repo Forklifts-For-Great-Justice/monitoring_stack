@@ -33,7 +33,7 @@ services:
       - grafana-data:/var/lib/grafana
       - /srv/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - /srv/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - /data/compose/monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - /srv/grafana/dashboards:/var/lib/grafana/dashboards
     restart: unless-stopped
     networks:
       - monitoring_default
