@@ -3,38 +3,13 @@ modules:
     prober: http
     timeout: 5s
     http:
-      valid_status_codes: [200]
-      method: GET
-      no_follow_redirects: false
       preferred_ip_protocol: ip4
-      ip_protocol_fallback: true
-      fail_if_ssl_above_threshold: 2592000
-      fail_if_not_ssl: false
-
-  http_head:
-    prober: http
-    timeout: 5s
-    http:
-      method: HEAD
-      valid_status_codes: [200]
-      preferred_ip_protocol: ip4
-
   http_post:
     prober: http
     timeout: 5s
     http:
       method: POST
-      valid_status_codes: [200, 201, 202]
       preferred_ip_protocol: ip4
-
   tcp_connect:
     prober: tcp
     timeout: 5s
-
-  dns:
-    prober: dns
-    timeout: 5s
-    dns:
-      query_name: hackfortress.net
-      query_type: A
-      preferred_ip_protocol: ip4
