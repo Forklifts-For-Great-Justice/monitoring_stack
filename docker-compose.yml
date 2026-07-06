@@ -31,9 +31,9 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - grafana-dashboards:/var/lib/grafana/dashboards
       - /srv/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - /srv/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - /srv/grafana/dashboards:/var/lib/grafana/dashboards
     restart: unless-stopped
     networks:
       - monitoring_default
@@ -59,6 +59,7 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
+  grafana-dashboards:
 
 networks:
   monitoring_default:
