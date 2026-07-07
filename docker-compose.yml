@@ -17,6 +17,11 @@ services:
     networks:
       - monitoring_default
       - proxy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prom.rule=Host(`prom.hackfortress.net`)"
@@ -35,6 +40,11 @@ services:
       - /srv/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - /srv/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - monitoring_default
       - proxy
@@ -55,6 +65,11 @@ services:
     command:
       - --config.file=/etc/blackbox_exporter/blackbox.yml
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   prometheus-mcp-server:
     image: ghcr.io/pab1it0/prometheus-mcp-server:1.6.1
@@ -75,6 +90,11 @@ services:
       - "traefik.http.routers.prometheus-mcp.tls=true"
       - "traefik.http.routers.prometheus-mcp.tls.certresolver=cloudflare"
       - "traefik.http.services.prometheus-mcp.loadbalancer.server.port=8080"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   prometheus-data:
