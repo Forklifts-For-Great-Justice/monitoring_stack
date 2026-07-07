@@ -31,7 +31,7 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
-      - grafana-dashboards:/var/lib/grafana/dashboards
+      - /srv/grafana/dashboards:/var/lib/grafana/dashboards
       - /srv/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - /srv/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
     restart: unless-stopped
@@ -56,10 +56,29 @@ services:
       - --config.file=/etc/blackbox_exporter/blackbox.yml
     restart: unless-stopped
 
+  prometheus-mcp-server:
+    image: ghcr.io/pab1it0/prometheus-mcp-server:1.6.1
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+      - PROMETHEUS_MCP_SERVER_TRANSPORT=http
+      - PROMETHEUS_MCP_BIND_HOST=0.0.0.0
+      - PROMETHEUS_MCP_BIND_PORT=8080
+      - PROMETHEUS_REQUEST_TIMEOUT=30
+    restart: unless-stopped
+    networks:
+      - monitoring_default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus-mcp.rule=Host(`prometheus-mcp.hackfortress.net`)"
+      - "traefik.http.routers.prometheus-mcp.entrypoints=https"
+      - "traefik.http.routers.prometheus-mcp.tls=true"
+      - "traefik.http.routers.prometheus-mcp.tls.certresolver=cloudflare"
+      - "traefik.http.services.prometheus-mcp.loadbalancer.server.port=8080"
+
 volumes:
   prometheus-data:
   grafana-data:
-  grafana-dashboards:
 
 networks:
   monitoring_default:
