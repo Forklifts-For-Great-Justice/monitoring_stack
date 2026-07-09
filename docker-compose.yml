@@ -90,6 +90,12 @@ services:
       - "traefik.http.routers.prometheus-mcp.tls=true"
       - "traefik.http.routers.prometheus-mcp.tls.certresolver=cloudflare"
       - "traefik.http.services.prometheus-mcp.loadbalancer.server.port=8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
     logging:
       driver: json-file
       options:
