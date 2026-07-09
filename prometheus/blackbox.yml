@@ -4,6 +4,7 @@ modules:
     timeout: 5s
     http:
       preferred_ip_protocol: ip4
+      follow_redirects: true
   http_post:
     prober: http
     timeout: 5s
