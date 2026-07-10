@@ -14,3 +14,11 @@ modules:
   tcp_connect:
     prober: tcp
     timeout: 5s
+  postgresql:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - send: "\x00\x00\x00\x08\x55\x53\x45\x52\x00\x61\x64\x6d\x69\x6e\x00"
+        - send: "\x00\x00\x00\x06\x50\x61\x73\x73\x77\x6f\x72\x64\x00\x63\x68\x61\x6e\x67\x65\x6d\x65\x00"
+        - expect: "R"

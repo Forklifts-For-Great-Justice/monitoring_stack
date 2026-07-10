@@ -71,6 +71,19 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    environment:
+      - DATA_SOURCE_NAME=postgresql://scoreboard:changeme@10.200.0.8:5432/hackfortress?sslmode=disable
+    ports:
+      - "9187:9187"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   prometheus-mcp-server:
     image: ghcr.io/pab1it0/prometheus-mcp-server:1.6.1
     environment:

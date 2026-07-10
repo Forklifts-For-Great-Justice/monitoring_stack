@@ -27,6 +27,19 @@ scrape_configs:
       - target_label: __address__
         replacement: '10.200.0.7:9115'
 
+  - job_name: 'blackbox_tcp'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+          - '10.200.0.8:5432'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: '10.200.0.7:9115'
+
   - job_name: 'etcd'
     static_configs:
       - targets: ['10.200.0.7:2379']
@@ -42,6 +55,10 @@ scrape_configs:
   - job_name: 'redis'
     static_configs:
       - targets: ['10.200.0.8:9121']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['10.200.0.7:9187']
 
   - job_name: 'scoreboard_services'
     static_configs:
