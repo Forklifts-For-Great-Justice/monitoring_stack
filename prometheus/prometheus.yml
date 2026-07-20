@@ -63,3 +63,9 @@ scrape_configs:
   - job_name: 'scoreboard_services'
     static_configs:
       - targets: ['10.200.0.8:8081', '10.200.0.8:8082', '10.200.0.8:8084', '10.200.0.8:8085']
+
+  - job_name: 'authelia'
+    scrape_interval: '15s'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['10.200.0.8:9959']
