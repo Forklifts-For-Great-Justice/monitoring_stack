@@ -67,7 +67,6 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=7d
-      - --rules.config.file=/etc/prometheus/rules/*.yml
     restart: unless-stopped
     networks:
       - monitoring_default
